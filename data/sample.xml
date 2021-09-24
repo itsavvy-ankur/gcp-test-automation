@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<employee>
+   <name>Mr John Test</name>
+   <email>test@abc.com</email>
+   <country>GB</country>
+</employee>
