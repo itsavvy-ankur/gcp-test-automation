@@ -15,16 +15,23 @@ import (
 
 var vowels map[rune]bool
 
-var _ = gauge.Step("Publish message <message> to pubsub topic <topic>", func(message string, topic string) {
-	ctx := context.Background()
+var(
+	projectID string = "asitech-dev" //default
 
-	// Sets your Google Cloud Platform project ID.
-	projectID := "asitech-dev"
-	// Creates a client.
-	client, err := pubsub.NewClient(ctx, projectID)
-	if err != nil {
-		log.Fatalf("Failed to create client: %v", err)
-	}
+	ctx context.Context = context.Background()
+
+)
+
+func getPubSubClient(projectID string) (*pubsub.Client){
+// Creates a client.
+client, err := pubsub.NewClient(ctx, projectID)
+if err != nil {
+	log.Fatalf("Failed to create client: %v", err)
+}
+return client
+}
+var _ = gauge.Step("List of topics in project <projectID>", func(projectID string) {
+	client := getPubSubClient(projectID)
 	defer client.Close()
 
 	for topics := client.Topics(ctx); ; {
@@ -42,8 +49,20 @@ var _ = gauge.Step("Publish message <message> to pubsub topic <topic>", func(mes
 })
 
 var _ = gauge.Step("Sample message from file <file>", func(content string) {
+	log.Printf("File Content : %s", content)
 	gauge.WriteMessage("Content : %s", content)
-	
+	client := getPubSubClient(projectID)
+	defer client.Close()
+
+	topic := client.Topic("big2gcp-img")
+
+	result := topic.Publish(ctx, &pubsub.Message{Data: []byte(content),})
+	id, err := result.Get(ctx)
+        if err != nil {
+                log.Printf("Get: %v", err)
+        }
+        log.Printf("Published a message; msg ID: %v\n", id)
+
 })
 
 var _ = gauge.Step("Vowels in English language are <vowels>.", func(vowelString string) {

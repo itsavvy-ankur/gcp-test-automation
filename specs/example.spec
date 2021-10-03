@@ -11,7 +11,7 @@ To execute this specification, run
 * Vowels in English language are "aeiou".
 
 ## list topics in a project
-* Publish message "hello" to pubsub topic "TBC"
+* List of topics in project "asitech-dev"
 * Sample message from file <file:/data/sample.xml>
 
 ## Vowel counts in single word
